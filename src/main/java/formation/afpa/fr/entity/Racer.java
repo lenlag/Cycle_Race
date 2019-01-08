@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.GenericGenerator;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @EntityScan
@@ -21,16 +20,17 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 @Table(name = "Racer")
 public class Racer extends Person {
 	
+	/*	// id comes from the parent class
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
 	@GenericGenerator(name = "native", strategy = "native")
 	@Column(name = "id", nullable = false, length = 25)
 	private Long id;
-	
+	*/
 	@OneToMany(mappedBy="racer")
 	private Set<Cycle> cycles;
 	
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.PERSIST})		
 	@JoinColumn(name="id_team")
 	private Team team;
 	
@@ -38,21 +38,20 @@ public class Racer extends Person {
 		
 	}
 
-	public Racer(Long id, Set<Cycle> cycles) {
-		super();
-		this.id = id;
+	public Racer(Long id, String firstName, String lastName, Set<Cycle> cycles) {
+		super(id, firstName, lastName);
 		this.cycles = cycles;
 	
 	}
-
-	public Long getId() {
+/*
+	public Long getId() { // id comes from the parent class
 		return id;
 	}
 
 	public void setId(Long id) {
 		this.id = id;
 	}
-
+*/
 	public Set<Cycle> getCycles() {
 		return cycles;
 	}
@@ -71,9 +70,8 @@ public class Racer extends Person {
 
 	@Override
 	public String toString() {
-		return "Racer : " + super.toString() + cycles + team + "|";
+		return super.toString() + ", cycles : " + cycles;
 	}
-	
 	
 	
 

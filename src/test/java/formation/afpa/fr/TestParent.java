@@ -1,17 +1,18 @@
 package formation.afpa.fr;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.transaction.Transactional;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import formation.afpa.fr.entity.Country;
 import formation.afpa.fr.entity.Cycle;
@@ -20,104 +21,55 @@ import formation.afpa.fr.entity.Person;
 import formation.afpa.fr.entity.Race;
 import formation.afpa.fr.entity.Racer;
 import formation.afpa.fr.entity.Team;
-import formation.afpa.fr.repository.CountryRepository;
-import formation.afpa.fr.repository.CycleRepository;
-import formation.afpa.fr.repository.LocationRepository;
-import formation.afpa.fr.repository.PersonRepository;
-import formation.afpa.fr.repository.RaceRepository;
-import formation.afpa.fr.repository.RacerRepository;
-import formation.afpa.fr.repository.TeamRepository;
 
+@RunWith(SpringRunner.class)
+@DataJpaTest
+@SpringBootTest(classes = SmallApp.class)
+public class TestParent {
 
-@SpringBootApplication
-public class ExCycleRaceApplication implements CommandLineRunner {
-		
-	private static Log log = LogFactory.getLog(ExCycleRaceApplication.class);
-	
 	@Autowired
-	CountryRepository countryRep;
+	private TestEntityManager entityManager;
 	
-	@Autowired
-	CycleRepository cycleRep;
+	public long idLastCountry = 0l;
+	public long idLastCycle = 0l;
+	public long idLastLocation = 0l;
+	public long idLastPerson = 0l;
+	public long idLastRace = 0l;
+	public long idLastRacer = 0l;
+	public long idLastTeam = 0l;
+	public long idLastManager = 0l;
 	
-	@Autowired
-	LocationRepository locRep;
-	
-	@Autowired
-	PersonRepository persRep;
-	
-	@Autowired
-	RaceRepository raceRep;
-	
-	@Autowired
-	RacerRepository racerRep;
-	
-	@Autowired
-	TeamRepository teamRep;
-	
-	
-
-	public static void main(String[] args) {
-		SpringApplication.run(ExCycleRaceApplication.class, args);
-	}
-
-	@Transactional	//used here to create a temporary Session when the entities are in LAZY mode
-	public void run(String... args) throws Exception {
-		
-	//	initBDD();
-		
-		List<Race> races = (List<Race>) raceRep.findAll();
-		for (Race race : races) {
-			log.info(race);
-		}
-		
-	//	***Test JQuery function******
-		
-		List<Cycle> cycles = cycleRep.findByTotalSpeeds(25);
-		for (Cycle c : cycles) {
-			log.info(c);
-		}
-		
-		
-		//***Test DELETE CYCLE****
-	//	cycleRep.deleteById(8l);
-		
-		List<Cycle> c = (List<Cycle>) cycleRep.findAll();
-		for (Cycle cycle : c) {
-			log.info(cycle);
-		}
-		
-		//****Test DELETE Racer*****
-		
-		racerRep.deleteById(5l); // doesn't work, as FK restriction
-		
-		List<Racer> r = (List<Racer>) racerRep.findAll();
-		for (Racer racer : r) {
-			log.info(racer);
-		}
+	@Before()
+	public void setUp() {
+		initBdd();
 	}
 	
-	private void initBDD() {
-		log.info("init");
 	
+	@Test
+	public void test() { // we should create at least 1 test, otherwise the prog will not compile	
+		assertTrue(true);
+	}
+	
+	public void initBdd() {
+		
 		Country russia = new Country(null, "Russia", "RU");
 		Country france = new Country(null, "France", "FR");
 		Country italy = new Country(null, "Italy", "IT");
 		Country spain = new Country(null, "Spain", "SP");
 	
-		countryRep.save(russia);
-		countryRep.save(france);
-		countryRep.save(italy);
-		countryRep.save(spain);
+		entityManager.persist(russia);
+		entityManager.persist(france);
+		entityManager.persist(italy);
+		idLastCountry = (Long) entityManager.persistAndGetId(spain);
 				
 		Location locRus = new Location(null, "Saint Petersburg", russia);
 		Location locFr = new Location(null, "Lyon", france);
 		Location locIt = new Location(null, "Milan", italy);
 		Location locSp = new Location(null, "Ronda", spain);
-		locRep.save(locRus);
-		locRep.save(locFr);
-		locRep.save(locIt);
-		locRep.save(locSp);
+		entityManager.persist(locRus);
+		entityManager.persist(locFr);
+		entityManager.persist(locIt);
+		idLastLocation = (Long)entityManager.persistAndGetId(locSp);
 		
 		Cycle cycleFroome = new Cycle(null, "KTM", "KHH552", 7, 3);
 		Cycle cycleRowe = new Cycle(null, "BMC", "SRL01", 8, 3);
@@ -128,14 +80,14 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		Cycle cycleDemare = new Cycle(null, "Factor", "O2", 5, 3);
 		Cycle cycleSagen = new Cycle(null, "Bora", "Tarmac", 7, 3);
 		
-		cycleRep.save(cycleFroome);
-		cycleRep.save(cycleRowe);
-		cycleRep.save(cycleUran);
-		cycleRep.save(cycleBardet);
-		cycleRep.save(cycleDomont);
-		cycleRep.save(cycleKristoff);
-		cycleRep.save(cycleDemare);
-		cycleRep.save(cycleSagen);
+		entityManager.persist(cycleFroome);
+		entityManager.persist(cycleRowe);
+		entityManager.persist(cycleUran);
+		entityManager.persist(cycleBardet);
+		entityManager.persist(cycleDomont);
+		entityManager.persist(cycleKristoff);
+		entityManager.persist(cycleDemare);
+		idLastCycle = (Long)entityManager.persistAndGetId(cycleSagen);
 	
 		
 		Person manager1 = new Person(null, "John", "Bon Jovi");
@@ -144,10 +96,10 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		Person manager4 = new Person(null, "Angelika", "Vetrova");
 		
 		
-		persRep.save(manager1);
-		persRep.save(manager2);
-		persRep.save(manager3);
-		persRep.save(manager4);
+		entityManager.persist(manager1);
+		entityManager.persist(manager2);
+		entityManager.persist(manager3);
+		idLastManager = (Long)entityManager.persistAndGetId(manager4);
 		
 		Set<Cycle> cyclesFroome = new HashSet<>();
 		cyclesFroome.add(cycleFroome);
@@ -183,14 +135,14 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		Racer racerSagen = new Racer(null, "Peter", "Sagen", cyclesSagen);
 		
 		
-		racerRep.save(racerFroome);
-		racerRep.save(racerRowe);
-		racerRep.save(racerUran);
-		racerRep.save(racerBardet);
-		racerRep.save(racerDomont);
-		racerRep.save(racerKristoff);
-		racerRep.save(racerDemare);
-		racerRep.save(racerSagen);
+		entityManager.persist(racerFroome);
+		entityManager.persist(racerRowe);
+		entityManager.persist(racerUran);
+		entityManager.persist(racerBardet);
+		entityManager.persist(racerDomont);
+		entityManager.persist(racerKristoff);
+		entityManager.persist(racerDemare);
+		idLastRacer = (Long) entityManager.persistAndGetId(racerSagen);
 		
 		cycleBardet.setRacer(racerBardet);
 		cycleDemare.setRacer(racerDemare);
@@ -222,10 +174,10 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		Team teamLotto = new Team(null, "Lotto", manager3, racers3);
 		Team teamTrel = new Team(null, "Trel", manager4, racers4);
 				
-		teamRep.save(teamSky);
-		teamRep.save(teamWanty);
-		teamRep.save(teamLotto);
-		teamRep.save(teamTrel);
+		entityManager.persist(teamSky);
+		entityManager.persist(teamWanty);
+		entityManager.persist(teamLotto);
+		idLastTeam = (Long) entityManager.persistAndGetId(teamTrel);
 		
 		Set<Team> teams1 = new HashSet<>();
 		teams1.add(teamSky);
@@ -249,10 +201,10 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		Race race3 = new Race(null, "Bella vita", locIt, teams3);
 		Race race4 = new Race(null, "Carpe Diem", locSp, teams2);
 		
-		raceRep.save(race1);
-		raceRep.save(race2);
-		raceRep.save(race3);
-		raceRep.save(race4);
+		entityManager.persist(race1);
+		entityManager.persist(race2);
+		entityManager.persist(race3);
+		idLastRace = (Long) entityManager.persistAndGetId(race4);
 		
 				
 		racerFroome.setTeam(teamSky);
@@ -266,6 +218,5 @@ public class ExCycleRaceApplication implements CommandLineRunner {
 		
 		
 	}
-
+	
 }
-

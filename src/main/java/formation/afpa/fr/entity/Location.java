@@ -93,7 +93,7 @@ public class Location {
 
 	@Override
 	public String toString() {
-		return "Location: "  + city + country + races + "|";
+		return city + ", " + country;
 	}
 
 

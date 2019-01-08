@@ -29,8 +29,11 @@ public class Team {
 	@Column(name = "id", nullable = false, length = 25)
 	private Long id;
 	
+	@Column(name="name", nullable = false, length = 25)
+	private String name;
+	
 	@OneToOne
-	@JoinColumn(name="id_person")
+	@JoinColumn(name="manager")
 	private Person manager;
 	
 	@OneToMany(mappedBy="team")
@@ -45,9 +48,10 @@ public class Team {
 	}
 
 
-	public Team(Long id, Person manager, Set<Racer> racers) {
+	public Team(Long id, String name, Person manager, Set<Racer> racers) {
 		super();
 		this.id = id;
+		this.name = name;
 		this.manager = manager;
 		this.racers = racers;
 	
@@ -61,6 +65,17 @@ public class Team {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+
+	
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 
@@ -96,7 +111,7 @@ public class Team {
 
 	@Override
 	public String toString() {
-		return "Team : " + manager + racers +  races + "|";
+		return "Team name : " + name  + ", manager : " +  manager + ", racers : " + racers;
 	}
 	
 	

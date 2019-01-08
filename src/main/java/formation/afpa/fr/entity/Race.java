@@ -88,7 +88,13 @@ public class Race {
 
 	@Override
 	public String toString() {
-		return "Race : " + name  + location + teams + "|";
+		return 
+				"\n\t Race : " + 
+	
+				"\n\t Name => " + name  + 
+				"\n\t Location => " +  location +  
+				
+				"\n\t Teams => " + teams;
 	}
 	
 	

@@ -1,5 +1,6 @@
 package formation.afpa.fr.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,7 +37,7 @@ public class Cycle {
 	private int nbGearPlates;
 	
 	
-	@ManyToOne
+	@ManyToOne(cascade = { CascadeType.PERSIST})
 	@JoinColumn(name="id_racer")
 	private Racer racer;
 	
@@ -107,6 +108,7 @@ public class Cycle {
 	}
 
 
+	
 	public Racer getRacer() {
 		return racer;
 	}
@@ -119,7 +121,7 @@ public class Cycle {
 
 	@Override
 	public String toString() {
-		return "Cycle : " + brand +  model  + nbGears +  nbGearPlates + "|";
+		return "Cycle : " + brand + " " +  model  + " " + nbGears + " " + nbGearPlates;
 	}
 	
 		
